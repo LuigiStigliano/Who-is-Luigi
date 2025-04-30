@@ -107,4 +107,4 @@ Questo è un punto di partenza molto semplice. Luigi offre molte più funzionali
 5. **Test Automatici**: Aggiungere un semplice test automatico che verifica la creazione dei file di output.
 6. **Esempio di task parallele**: Mostrare la gestione contemporanea di task.
 7. **Esempio di task che fallisce**: Per mostrare come Luigi gestisce il fallimento.
-8. **Un caso praticoo leggermente più complesso: Utilizzando un file CSV o JSON da elaborare.
+8. **Un caso praticoo leggermente più complesso**: Utilizzando un file CSV o JSON da elaborare.
