@@ -105,3 +105,6 @@ Questo è un punto di partenza molto semplice. Luigi offre molte più funzionali
 3. **Aggiungere una sezione "Troubleshooting"**: Ad esempio, cosa fare se si riceve un errore di permessi o se i file non vengono creati.
 4. **Esempio di visualizzazione web**: Anche solo una nota su come avviare il web server di Luigi (luigid) per vedere la pipeline graficamente. Dico la nota perchè ancora non ho capito bene come farlo partire neanche io :D
 5. **Test Automatici**: Aggiungere un semplice test automatico che verifica la creazione dei file di output.
+6. **Esempio di task parallele**: Mostrare la gestione contemporanea di task.
+7. **Esempio di task che fallisce**: Per mostrare come Luigi gestisce il fallimento.
+8. **Un caso praticoo leggermente più complesso: Utilizzando un file CSV o JSON da elaborare.
