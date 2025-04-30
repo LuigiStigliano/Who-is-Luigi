@@ -64,7 +64,7 @@ Per eseguire la pipeline, usa il seguente comando dalla directory principale (`W
 python pipeline.py ProcessFile --local-scheduler
 ```
 
-### Dettagli del Comando
+### Dettagli del comando
 
 - **`python pipeline.py`**: Esegue lo script Python.
 - **`ProcessFile`**: Specifica la task finale che vuoi eseguire. Luigi capirà che `ProcessFile` richiede `CreateInputFile` e la eseguirà per prima, se necessario.
@@ -72,7 +72,7 @@ python pipeline.py ProcessFile --local-scheduler
 
 ---
 
-### Cosa Succederà
+### Cosa succederà
 
 1. Luigi controllerà se l'output di **`ProcessFile`** (`data/output.txt`) esiste già.
 2. Se non esiste, controllerà le dipendenze di **`ProcessFile`**, ovvero **`CreateInputFile`**.
@@ -83,7 +83,7 @@ python pipeline.py ProcessFile --local-scheduler
 
 ---
 
-## Concetti Chiave di Luigi Mostrati
+## Concetti chiave di Luigi mostrati
 
 - **Task**: Unità di lavoro (es. `CreateInputFile`, `ProcessFile`). Definite come classi che ereditano da `luigi.Task`.
 - **Target**: L'output di una Task (es. un file). Definito nel metodo `output()`. Luigi usa l'esistenza del Target per determinare se una Task è completata. `luigi.LocalTarget` rappresenta un file nel filesystem locale.
