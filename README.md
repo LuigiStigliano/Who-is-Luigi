@@ -1,4 +1,4 @@
-# Esempio Semplice con Luigi
+# Esempio con Luigi
 
 Questo repository contiene un esempio basilare che dimostra il funzionamento della libreria Python `luigi`. Luigi è un framework sviluppato da Spotify per costruire pipeline complesse di batch job. Gestisce le dipendenze, il workflow, la visualizzazione, la gestione degli errori e altro ancora che devo ancora capire e imparare.
 
