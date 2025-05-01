@@ -17,9 +17,12 @@ La task **`ProcessFile`** dipende dalla task **`CreateInputFile`**.
 
 ```plaintext
 Who-is-Luigi/
-├── README.md          # Questo file
+├── README.md          # Documentazione del progetto
 ├── requirements.txt   # Dipendenze Python (solo luigi)
-└── pipeline.py        # Codice Python con le task Luigi
+├── pipeline.py        # Codice Python con le task Luigi
+└── data/              # Directory creata durante l'esecuzione
+    ├── input.txt      # File generato da CreateInputFile
+    └── output.txt     # File generato da ProcessFile
 ```
 
 ---
