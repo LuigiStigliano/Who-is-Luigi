@@ -65,7 +65,7 @@ Who-is-Luigi/
 Per eseguire la pipeline, usa il seguente comando dalla directory principale (`Who-is-Luigi`):
 
 ```bash
-python pipeline.py ProcessFile --local-scheduler
+python src/pipeline.py ProcessFile --local-scheduler
 ```
 
 ### Dettagli del comando
