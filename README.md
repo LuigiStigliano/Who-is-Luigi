@@ -13,21 +13,6 @@ La task **`ProcessFile`** dipende dalla task **`CreateInputFile`**.
 
 ---
 
-## Struttura del Progetto
-
-```plaintext
-Who-is-Luigi/
-├── src/               # Cartella principale per il codice sorgente
-|    └── pipeline.py   # Codice Python con le task Luigi
-├── README.md          # Documentazione del progetto
-├── requirements.txt   # Dipendenze Python (solo luigi)
-└── data/              # Directory creata durante l'esecuzione
-    ├── input.txt      # File generato da CreateInputFile
-    └── output.txt     # File generato da ProcessFile
-```
-
----
-
 ## Prerequisiti
 
 - **Python 3.x**
@@ -36,28 +21,28 @@ Who-is-Luigi/
 
 ## Installazione
 
-1. **Clona il repository:**
-   ```bash
+1. Clonare il repository:
+   ```
    git clone https://github.com/LuigiStigliano/Who-is-Luigi.git
    cd Who-is-Luigi
    ```
 
-2. **(Consigliato) Crea e attiva un ambiente virtuale:**
-   ```bash
-    Su Windows
-    python -m venv .venv
-    .venv\Scripts\activate
-
-    Su macOS/Linux
-    python3 -m venv .venv
-    source .venv/bin/activate
+2. Creare e attivare un ambiente virtuale:
+   ```
+   # Su Windows
+   python -m venv .venv
+   .venv\Scripts\activate
+   
+   # Su macOS/Linux
+   python3 -m venv .venv
+   source .venv/bin/activate
    ```
 
-3. **Installa le dipendenze:**
-   ```bash
+3. Installare le dipendenze:
+   ```
    pip install -r requirements.txt
    ```
-
+   
 ---
 
 ## Esecuzione
