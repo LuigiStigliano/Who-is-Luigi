@@ -13,12 +13,6 @@ La task **`ProcessFile`** dipende dalla task **`CreateInputFile`**.
 
 ---
 
-## Prerequisiti
-
-- **Python 3.x**
-
----
-
 ## Installazione
 
 1. Clonare il repository:
