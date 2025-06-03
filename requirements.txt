@@ -1,1 +1,1 @@
-luigi==3.4.0
+luigi
