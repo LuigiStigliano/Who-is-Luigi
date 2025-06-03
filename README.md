@@ -1,28 +1,44 @@
-# Esempio con Luigi
+# Who is Luigi?
 
-Questo repository contiene un esempio basilare che dimostra il funzionamento della libreria Python `luigi`. Luigi è un framework sviluppato da Spotify per costruire pipeline complesse di batch job. Gestisce le dipendenze, il workflow, la visualizzazione, la gestione degli errori e altro ancora che devo ancora capire e imparare.
+Questo repository contiene un esempio che dimostra il funzionamento della libreria Python `luigi`. Luigi è un framework sviluppato da Spotify per costruire pipeline complesse di batch job. Gestisce le dipendenze, il workflow, la visualizzazione, la gestione degli errori e altro.
 
 ## Pipeline Dimostrativa
 
-Questo esempio specifico mostra una pipeline con due task:
+Questo progetto mostra diverse mini-pipeline per illustrare vari concetti di Luigi, organizzate in moduli per maggiore chiarezza:
 
-1. **`CreateInputFile`**: Crea un file di testo semplice (`data/input.txt`).
-2. **`ProcessFile`**: Legge il file `data/input.txt`, conta il numero di righe e scrive il risultato in un altro file (`data/output.txt`).
+### 1. Pipeline Base (`src/tasks/base_tasks.py`)
+- **`CreateInputFile`**: Crea un file di testo semplice (`data/input.txt` di default).
+- **`ProcessFile`**: Legge il file creato, conta il numero di righe e scrive il risultato in un altro file (`data/output.txt` di default).
+  
+  La task `ProcessFile` dipende da `CreateInputFile`.
 
-La task **`ProcessFile`** dipende dalla task **`CreateInputFile`**.
+### 2. Pipeline con Task Parallele (`src/tasks/parallel_tasks.py`)
+- **`CreateParallelFileA`** e **`CreateParallelFileB`**: Creano due file distinti (`data/parallel_example/fileA.txt` e `fileB.txt`). Queste possono essere eseguite in parallelo.
+- **`ProcessParallelFiles`**: Dipende da `CreateParallelFileA` e `CreateParallelFileB`, legge i loro output e crea un file di sommario (`data/parallel_summary.txt`).
+
+### 3. Pipeline con Gestione Fallimenti (`src/tasks/failure_example.py`)
+- **`FailingTask`**: Una task progettata per fallire sollevando un'eccezione.
+- **`DependsOnFailingTask`**: Dipende da `FailingTask` per mostrare come Luigi gestisce le dipendenze fallite.
+
+### 4. Pipeline CSV (Caso d'uso più complesso) (`src/tasks/csv_tasks.py`)
+- **`CreateSampleCSV`**: Genera un file CSV con dati di esempio (`data/sample_data.csv`).
+- **`ProcessCSVFile`**: Legge il file CSV, esegue calcoli (es. valore totale, conteggio prodotti) e scrive un report (`data/csv_summary_report.txt`).
+
+### 5. `RunAllExamples` (`src/tasks/wrapper_tasks.py`)
+Una `luigi.WrapperTask` che raggruppa le pipeline principali (`ProcessFile`, `ProcessParallelFiles`, `ProcessCSVFile`) per una facile esecuzione combinata. È la task di default quando si esegue `python src/pipeline.py`.
 
 ---
 
 ## Installazione
 
-1. Clonare il repository:
-   ```
+1. **Clonare il repository:**
+   ```bash
    git clone https://github.com/LuigiStigliano/Who-is-Luigi.git
    cd Who-is-Luigi
    ```
 
-2. Creare e attivare un ambiente virtuale:
-   ```
+2. **Creare e attivare un ambiente virtuale:**
+   ```bash
    # Su Windows
    python -m venv .venv
    .venv\Scripts\activate
@@ -32,8 +48,8 @@ La task **`ProcessFile`** dipende dalla task **`CreateInputFile`**.
    source .venv/bin/activate
    ```
 
-3. Installare le dipendenze:
-   ```
+3. **Installare le dipendenze:**
+   ```bash
    pip install -r requirements.txt
    ```
    
@@ -41,53 +57,95 @@ La task **`ProcessFile`** dipende dalla task **`CreateInputFile`**.
 
 ## Esecuzione
 
-Per eseguire la pipeline, usa il seguente comando dalla directory principale (`Who-is-Luigi`):
+Per eseguire la pipeline, usa il comando `python src/pipeline.py` seguito dalla Task finale che vuoi eseguire (ad es. `ProcessFile`, `ProcessCSVFile`, `RunAllExamples`) e `--local-scheduler`. Lo script `src/pipeline.py` importa tutte le task necessarie dai sottomoduli.
 
-```bash
-python src/pipeline.py ProcessFile --local-scheduler
-```
+### Comandi di Esempio
+
+- **Eseguire tutte le pipeline principali (default):**
+  ```bash
+  python src/pipeline.py RunAllExamples --local-scheduler
+  ```
+  *(Se esegui `python src/pipeline.py --local-scheduler` senza specificare una task, `RunAllExamples` verrà eseguita come da configurazione nel file.)*
+
+- **Eseguire la pipeline base:**
+  ```bash
+  python src/pipeline.py ProcessFile --local-scheduler
+  ```
+
+- **Eseguire la pipeline con task parallele:**
+  ```bash
+  python src/pipeline.py ProcessParallelFiles --local-scheduler
+  ```
+
+- **Eseguire la pipeline CSV:**
+  ```bash
+  python src/pipeline.py ProcessCSVFile --local-scheduler
+  ```
+
+- **Testare una task che fallisce:**
+  ```bash
+  python src/pipeline.py DependsOnFailingTask --local-scheduler
+  ```
 
 ### Dettagli del comando
 
-- **`python pipeline.py`**: Esegue lo script Python.
-- **`ProcessFile`**: Specifica la task finale che vuoi eseguire. Luigi capirà che `ProcessFile` richiede `CreateInputFile` e la eseguirà per prima, se necessario.
-- **`--local-scheduler`**: Dice a Luigi di usare uno scheduler locale semplice invece di cercare un demone `luigid` centrale. È ideale per lo sviluppo e l'esecuzione locale.
+- **`python src/pipeline.py`**: Esegue lo script Python principale che orchestra le task.
+- **`<NomeTask>`**: Specifica la task finale che vuoi eseguire. Luigi risolverà e eseguirà le dipendenze necessarie.
+- **`--local-scheduler`**: Dice a Luigi di usare uno scheduler locale semplice.
 
----
+### Esempio di Parametrizzazione da CLI
 
-### Cosa succederà
+Puoi sovrascrivere i parametri di default delle task direttamente da riga di comando. Il formato è `--<NomeTask>-<nome-parametro> <valore>`.
 
-1. Luigi controllerà se l'output di **`ProcessFile`** (`data/output.txt`) esiste già.
-2. Se non esiste, controllerà le dipendenze di **`ProcessFile`**, ovvero **`CreateInputFile`**.
-3. Controllerà se l'output di **`CreateInputFile`** (`data/input.txt`) esiste già.
-4. Se `data/input.txt` non esiste, eseguirà il metodo `run()` di **`CreateInputFile`**. Verrà creato il file `data/input.txt`.
-5. Una volta che la dipendenza è soddisfatta (cioè `data/input.txt` esiste), Luigi eseguirà il metodo `run()` di **`ProcessFile`**. Questo leggerà `data/input.txt`, conterà le righe e creerà `data/output.txt`.
-6. Se riesegui il comando, Luigi vedrà che `data/output.txt` esiste già e non farà nulla, mostrando che le task sono già completate (idempotenza). Per forzare una riesecuzione, dovresti cancellare i file `data/input.txt` e `data/output.txt`.
+Ad esempio, per cambiare il file di input per `CreateInputFile` (che è una dipendenza di `ProcessFile`):
 
----
+```bash
+python src/pipeline.py ProcessFile --CreateInputFile-filename data/mio_input_custom.txt --ProcessFile-input-file-param data/mio_input_custom.txt --local-scheduler
+```
+
+*In questo caso, ProcessFile usa input_file_param per specificare il nome del file che CreateInputFile deve generare.*
+
+## Cosa succederà (Esempio con ProcessFile)
+
+1. Luigi controllerà se l'output di `ProcessFile` (`data/output.txt`) esiste.
+2. Se non esiste, controllerà le dipendenze di `ProcessFile`, ovvero `CreateInputFile` (dal modulo `base_tasks`).
+3. Controllerà se l'output di `CreateInputFile` (`data/input.txt`) esiste.
+4. Se `data/input.txt` non esiste, eseguirà `CreateInputFile.run()`.
+5. Una volta soddisfatta la dipendenza, Luigi eseguirà `ProcessFile.run()`.
+
+**Nota:** Se riesegui il comando, Luigi vedrà che gli output esistono già e non farà nulla (idempotenza). Per forzare una riesecuzione, cancella i file di output rilevanti.
+
+## Visualizzazione Web con luigid
+
+Luigi include un server web (`luigid`) che fornisce una UI per visualizzare lo stato delle task e le loro dipendenze.
+
+### Avvia luigid
+
+In un terminale separato, esegui:
+```bash
+luigid
+```
+Il server sarà tipicamente accessibile su http://localhost:8082.
+
+### Esegui la tua pipeline senza --local-scheduler
+
+Ad esempio:
+```bash
+python src/pipeline.py ProcessCSVFile
+```
+La pipeline si registrerà con il demone `luigid`.
+
+### Apri il browser
+Naviga a http://localhost:8082 per vedere la pipeline.
 
 ## Concetti chiave di Luigi mostrati
 
-- **Task**: Unità di lavoro (es. `CreateInputFile`, `ProcessFile`). Definite come classi che ereditano da `luigi.Task`.
-- **Target**: L'output di una Task (es. un file). Definito nel metodo `output()`. Luigi usa l'esistenza del Target per determinare se una Task è completata. `luigi.LocalTarget` rappresenta un file nel filesystem locale.
-- **`requires()`**: Metodo che definisce le dipendenze di una Task. Restituisce le istanze delle Task che devono essere completate prima che questa Task possa iniziare.
-- **`run()`**: Metodo che contiene la logica effettiva per eseguire la Task. Viene chiamato da Luigi solo se il Target definito in `output()` non esiste e tutte le dipendenze definite in `requires()` sono soddisfatte.
-- **Parametri**: Permettono di configurare le Task dall'esterno (es. `filename` in `CreateInputFile`).
-- **Local Scheduler**: Un modo semplice per eseguire pipeline Luigi senza un server scheduler centrale.
-
----
-
-Questo è un punto di partenza molto semplice. Luigi offre molte più funzionalità per pipeline complesse, gestione di parametri, interfacce utente web, esecuzione distribuita e integrazioni con vari sistemi (HDFS, S3, database, ecc.).
-
----
-
-## Cosa verrà aggiunto in futuro in questa repository
-
-1. **Esempio di parametrizzazione da CLI**: Mostrare come passare parametri alle task direttamente da riga di comando.
-2. **Gestione errori e logging**: Utilizzare il modulo logging invece di print per la gestione dei messaggi, mostrando come Luigi integra i log.
-3. **Aggiungere una sezione "Troubleshooting"**: Ad esempio, cosa fare se si riceve un errore di permessi o se i file non vengono creati.
-4. **Esempio di visualizzazione web**: Anche solo una nota su come avviare il web server di Luigi (luigid) per vedere la pipeline graficamente. Dico la nota perchè ancora non ho capito bene come farlo partire neanche io :D
-5. **Test Automatici**: Aggiungere un semplice test automatico che verifica la creazione dei file di output.
-6. **Esempio di task parallele**: Mostrare la gestione contemporanea di task.
-7. **Esempio di task che fallisce**: Per mostrare come Luigi gestisce il fallimento.
-8. **Un caso pratico leggermente più complesso**: Utilizzando un file CSV o JSON da elaborare.
+- **Task**: Unità di lavoro. Definite come classi che ereditano da `luigi.Task`.
+- **Target**: L'output di una Task. Definito nel metodo `output()`.
+- **requires()**: Definisce le dipendenze di una Task.
+- **run()**: Contiene la logica effettiva della Task.
+- **Parametri** (`luigi.Parameter`): Permettono di configurare le Task, anche da CLI.
+- **Scheduler Locale**: Per esecuzioni semplici.
+- **WrapperTask**: Task speciali per raggruppare altre task.
+- **Idempotenza**: Le task non vengono rieseguite se il loro output esiste già.
+- **Modularizzazione**: Divisione delle task in file separati per una migliore organizzazione.
